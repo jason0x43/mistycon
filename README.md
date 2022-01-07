@@ -14,7 +14,8 @@ server should be setup to load `skills/deno.json`.
 ## Getting started
 
 First, create a `config.json` file in the project directory. This file currently
-has only one required parameter, and should look like:
+has only one required parameter, the local IP address of the Misty II robot that
+will be controlled. It should look like:
 
 ```json
 {
