@@ -9,7 +9,9 @@ installed, the app will install a local copy the first time it's run.
 
 For the best editing experience, ensure your editor is setup to run the Deno
 language server. When editing skills in the `skills/` directory, the langage
-server should be setup to load `skills/deno.json`.
+server should be setup to load `skills/deno.json`. The `misty` property from the
+JavaScript SDK is partially typed, allowing the language server to provide
+some autocompletion and type checking.
 
 ## Getting started
 
@@ -71,8 +73,8 @@ $ ./mc deploy look-around
 ```
 
 If your editor is properly configured, the Deno language server will be used to
-provide completion for the misty API when you edit files in the `skills/`
-directory.
+provide completion for the misty API (the typings are very much a work in progress)
+when you edit files in the `skills/` directory.
 
 ## Misty II API
 
