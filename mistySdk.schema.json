@@ -1,0 +1,81 @@
+{
+  "title": "JSON schema for Misty skill manifest",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "id": "mistySdk",
+
+  "type": "object",
+
+  "properties": {
+    "Name": {
+      "type": "string"
+    },
+
+    "UniqueId": {
+      "type": "string"
+    },
+
+    "Description": {
+      "type": "string"
+    },
+
+    "StartupRules": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["Manual", "Robot", "Startup"]
+      }
+    },
+
+    "Language": {
+      "type": "string"
+    },
+
+    "BroadcastMode": {
+      "type": "string",
+      "enum": ["off", "debug", "verbose"]
+    },
+
+    "TimeoutInSeconds": {
+      "type": "number"
+    },
+
+    "CleanupOnCancel": {
+      "type": "boolean"
+    },
+
+    "WriteToLog": {
+      "type": "boolean"
+    },
+
+    "SkillStorageLifetime": {
+      "type": "string",
+      "enum": ["Skill", "Reboot", "LongTerm"]
+    },
+
+	"ReadPermissions": {
+		"type": "array",
+		"items": { "type": "string" }
+	},
+
+	"WritePermissions": {
+		"type": "array",
+		"items": { "type": "string" }
+	},
+
+	"StartPermissions": {
+		"type": "array",
+		"items": { "type": "string" }
+	},
+
+	"TriggerPermissions": {
+		"type": "array",
+		"items": { "type": "string" }
+	},
+
+	"Parameters": {
+		"type": "object"
+	}
+  },
+
+  "required": ["Name", "UniqueId", "Language"]
+}
