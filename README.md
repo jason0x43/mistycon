@@ -80,8 +80,9 @@ when you edit files in the `skills/` directory.
 
 The Misty
 [REST API docs](https://docs.mistyrobotics.com/misty-ii/rest-api/overview/) are
-frequently inaccurate; the
-[API Explorer](http://sdk.mistyrobotics.com/api-explorer/index.html) is more
-trustworthy. The
-[JavaScript API docs](https://docs.mistyrobotics.com/misty-ii/javascript-sdk/api-reference/)
-are somewhat more reliable.
+frequently inaccurate (the docs do point out that much of it is in alpha or beta
+status). The
+[API Explorer](http://sdk.mistyrobotics.com/api-explorer/index.html) is also a good
+source for API information. The
+[JavaScript SDK docs](https://docs.mistyrobotics.com/misty-ii/javascript-sdk/api-reference/)
+are a bit more complete.
