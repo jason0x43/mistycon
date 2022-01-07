@@ -76,6 +76,8 @@ If your editor is properly configured, the Deno language server will be used to
 provide completion for the misty API (the typings are very much a work in progress)
 when you edit files in the `skills/` directory.
 
+This repo also includes a JSON schema for skill manifest files.
+
 ## Misty II API
 
 The Misty
