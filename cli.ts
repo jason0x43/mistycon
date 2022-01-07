@@ -1,36 +1,19 @@
 import { Arguments, JSZip, Yargs, yargs } from "./deps.ts";
-import config from "./config.json" assert { type: "json" };
-import { Skill } from "./mistyApi.ts";
+import {
+  cancelSkill,
+  changeLed,
+  getDeviceInfo,
+  getSkills,
+  removeSkill,
+  runSkill,
+  setVolume,
+  speak,
+  uploadSkill,
+} from "./api.ts";
 
-const api = `http://${config.address}/api`;
-
-async function send(path: string, data: Record<string, unknown> | FormData) {
-  const fetchInit: RequestInit = { method: "POST" };
-  if (data instanceof FormData) {
-    fetchInit.body = data;
-  } else {
-    fetchInit.headers = { "Content-Type": "application/json" };
-    fetchInit.body = JSON.stringify(data);
-  }
-
-  const resp = await fetch(`${api}/${path}`, fetchInit);
-  return resp.json();
-}
-
-async function get<T>(path: string, options?: RequestInit) {
-  const resp = await fetch(`${api}/${path}`, options);
-  const result = await resp.json();
-  return result.result as T;
-}
-
-async function getSkillId(name: string): Promise<string | undefined> {
-  const skills = await get<Skill[]>("skills");
-  for (const skill of skills) {
-    if (skill.name === name) {
-      return skill.uniqueId;
-    }
-  }
-  return undefined;
+export async function getSkillId(name: string): Promise<string | undefined> {
+  const skills = await getSkills();
+  return skills.find((skill) => skill.name === name)?.uniqueId;
 }
 
 const parser = yargs(Deno.args)
@@ -90,7 +73,7 @@ parser.command(
     }
 
     if (color) {
-      await send("led", color);
+      await changeLed(color);
     }
   },
 );
@@ -106,7 +89,7 @@ parser.command(
   },
   async (args: Arguments & { text: string }) => {
     const { text } = args;
-    await send("tts/speak", {
+    await speak({
       flush: false,
       text: text,
       speechRate: 1,
@@ -126,7 +109,7 @@ parser.command(
   },
   async (args: Arguments & { value: string }) => {
     const { value } = args;
-    await send("audio/volume", { Volume: Number(value) });
+    await setVolume(Number(value));
   },
 );
 
@@ -135,8 +118,7 @@ parser.command(
   "Get information about the robot",
   {},
   async () => {
-    const data = await get("device");
-    console.log(data);
+    console.log(await getDeviceInfo());
   },
 );
 
@@ -157,14 +139,10 @@ parser.command(
     zip.addFile(`${name}.json`, await Deno.readFile(`./skills/${name}.json`));
     const data = await zip.generateAsync({ type: "uint8array" });
 
-    const body = new FormData();
-    body.append(
-      "File",
-      new File([data], `${name}.zip`, { type: "application/zip" }),
-    );
-    body.append("ImmediatelyApply", "false");
-    body.append("OverwriteExisting", "true");
-    const result = await send("skills", body);
+    const result = await uploadSkill({
+      overwriteExisting: true,
+      file: new File([data], `${name}.zip`, { type: "application/zip" }),
+    });
     console.log(result);
   },
 );
@@ -182,9 +160,7 @@ parser.command(
     const { name } = args;
     const id = await getSkillId(name);
     if (id) {
-      const params = new URLSearchParams();
-      params.set("Skill", id);
-      const result = await get(`${api}/skills?${params}`, { method: "DELETE" });
+      const result = await removeSkill(id);
       console.log(result);
     } else {
       console.log(`Unknown skill "${name}"`);
@@ -205,7 +181,7 @@ parser.command(
     const { name } = args;
     const id = await getSkillId(name);
     if (id) {
-      const result = await send("skills/start", { Skill: id });
+      const result = await runSkill(id);
       console.log(result);
     } else {
       console.log(`Unknown skill "${name}"`);
@@ -224,9 +200,9 @@ parser.command(
   },
   async (args: Arguments & { name: string }) => {
     const { name } = args;
-    const id = getSkillId(name);
+    const id = await getSkillId(name);
     if (id) {
-      const result = await send("skills/cancel", { Skill: id });
+      const result = await cancelSkill(id);
       console.log(result);
     } else {
       console.log(`Unknown skill "${name}"`);
@@ -250,9 +226,7 @@ parser.command(
     },
   },
   async (args: Arguments & { verbose: boolean; running: boolean }) => {
-    const skills = args.running
-      ? await get<Skill[]>("skills/running")
-      : await get<Skill[]>("skills");
+    const skills = await getSkills({ running: args.running });
     if (args.verbose) {
       console.log(skills);
     } else {
