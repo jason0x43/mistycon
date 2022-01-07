@@ -1,0 +1,7 @@
+{
+	"Name": "LookAround",
+	"Description": "Have Misty Look Around",
+	"UniqueId": "9924c6ff-65d6-412f-a3c7-fac6b99adfe9",
+	"StartupRules": [ "Manual" ],
+	"Language": "javascript"
+}
