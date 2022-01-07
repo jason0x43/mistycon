@@ -85,15 +85,23 @@ parser.command(
     yargs.positional("text", {
       describe: "A string of text to speak",
       type: "string",
+    }).option("rate", {
+      alias: "r",
+      type: "number",
+      default: 1,
+    }).option("pitch", {
+      alias: "p",
+      type: "number",
+      default: 1,
     });
   },
-  async (args: Arguments & { text: string }) => {
+  async (args: Arguments & { text: string; rate: number; pitch: number }) => {
     const { text } = args;
     await speak({
       flush: false,
       text: text,
-      speechRate: 1,
-      pitch: 0.2,
+      speechRate: args.rate,
+      pitch: args.pitch,
     });
   },
 );
@@ -107,9 +115,9 @@ parser.command(
       type: "number",
     });
   },
-  async (args: Arguments & { value: string }) => {
+  async (args: Arguments & { value: number }) => {
     const { value } = args;
-    await setVolume(Number(value));
+    await setVolume(value);
   },
 );
 
