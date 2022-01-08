@@ -1,5 +1,44 @@
 import config from "./config.json" assert { type: "json" };
 
+interface MistyEvent<MessageType = unknown> {
+  eventName: string;
+  message: MessageType;
+}
+
+export type MistySimpleEvent = MistyEvent<string>;
+
+export type MistyMessageEvent = MistyEvent<{
+  message: string;
+  truncated: boolean;
+  timestamp: string;
+  data?: unknown;
+}>;
+
+export type MistyActionEvent = MistyEvent<{
+  action: string;
+  guid: string;
+  name: string;
+  timestamp: string;
+}>;
+
+export function isSimpleEvent(
+  event: MistyEvent<unknown>,
+): event is MistySimpleEvent {
+  return typeof event.message === "string";
+}
+
+export function isMessageEvent(
+  event: MistyEvent<unknown>,
+): event is MistyMessageEvent {
+  return (event as MistyMessageEvent).message.message !== undefined;
+}
+
+export function isActionEvent(
+  event: MistyEvent<unknown>,
+): event is MistyActionEvent {
+  return (event as MistyActionEvent).message.action !== undefined;
+}
+
 export interface Skill {
   allowedCleanupTimeInMs: number;
   arduinoAssets: Record<string, unknown>;
@@ -28,6 +67,18 @@ export interface Skill {
   version: string;
   writePermissions: unknown[];
   writeToLog: boolean;
+}
+
+export interface HazardSettings {
+  bumpSensors: {
+    enabled: boolean;
+    sensorName: string;
+  }[];
+  tiltHazardThreshold: number | null;
+  timeOfFlightSensors: {
+    sensorName: string;
+    threshold: number;
+  }[];
 }
 
 export type EventType =
@@ -66,10 +117,9 @@ const api = `http://${config.address}/api`;
 /**
  * GET something from the robot
  */
-async function get<T>(path: string, options?: RequestInit) {
+async function get(path: string, options?: RequestInit) {
   const resp = await fetch(`${api}/${path}`, options);
-  const result = await resp.json();
-  return result.result as T;
+  return await resp.json();
 }
 
 /**
@@ -142,7 +192,16 @@ export async function connect(): Promise<WebSocket> {
  * Return information about the robot
  */
 export async function getDeviceInfo() {
-  return await get("device");
+  const response = await get("device");
+  return response.result;
+}
+
+/**
+ * Return the current hazard system settings
+ */
+export async function getHazardSettings(): Promise<HazardSettings> {
+  const response = await get("hazards/settings");
+  return response.result as HazardSettings;
 }
 
 /**
@@ -151,9 +210,10 @@ export async function getDeviceInfo() {
 export async function getSkills(
   options?: { running?: boolean },
 ): Promise<Skill[]> {
-  return options?.running
-    ? await get<Skill[]>("skills/running")
-    : await get<Skill[]>("skills");
+  const response = options?.running
+    ? await get("skills/running")
+    : await get("skills");
+  return response.result as Skill[];
 }
 
 /**
@@ -184,7 +244,7 @@ export async function* getStreamingEvents(
 export async function removeSkill(id: string) {
   const params = new URLSearchParams();
   params.set("Skill", id);
-  return await get(`${api}/skills?${params}`, { method: "DELETE" });
+  return await get(`skills?${params}`, { method: "DELETE" });
 }
 
 /**

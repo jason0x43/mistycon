@@ -5,8 +5,11 @@ import {
   connect,
   EventType,
   getDeviceInfo,
+  getHazardSettings,
   getSkills,
   getStreamingEvents,
+  isActionEvent,
+  isMessageEvent,
   removeSkill,
   restart,
   runSkill,
@@ -167,8 +170,8 @@ parser.command(
 );
 
 parser.command(
-  "delete <name>",
-  "Delete a skill",
+  "remove <name>",
+  "Remove a skill",
   (yargs: Yargs) => {
     yargs.positional("name", {
       describe: "A script name, like 'look-around'",
@@ -178,12 +181,12 @@ parser.command(
   async (args: Arguments & { name: string }) => {
     const { name } = args;
     const id = await getSkillId(name);
-    if (id) {
-      const result = await removeSkill(id);
-      console.log(result);
-    } else {
+    if (!id) {
       console.log(`Unknown skill "${name}"`);
+      return;
     }
+
+    await removeSkill(id);
   },
 );
 
@@ -199,11 +202,41 @@ parser.command(
   async (args: Arguments & { name: string }) => {
     const { name } = args;
     const id = await getSkillId(name);
-    if (id) {
-      const result = await runSkill(id);
-      console.log(result);
-    } else {
+    if (!id) {
       console.log(`Unknown skill "${name}"`);
+      return;
+    }
+
+    const socket = await connect();
+    const events: EventType[] = ["SkillData", "SkillSystemStateChange"];
+
+    // Unsubscribe from subscribed events when the CLI exits
+    globalThis.addEventListener("unload", () => {
+      stopStreamingEvents(socket, ...events);
+    });
+
+    const result = await runSkill(id);
+    console.log(result);
+
+    for await (const event of getStreamingEvents(socket, ...events)) {
+      if (isMessageEvent(event)) {
+        if (event.message.data && /Debug =>/.test(event.message.message)) {
+          console.log(`[${event.eventName}] ${event.message.data}`);
+        } else {
+          console.log(`[${event.eventName}] ${event.message.message}`);
+        }
+      } else if (isActionEvent(event)) {
+        console.log(`[${event.eventName}] ${event.message.action}`);
+      } else {
+        console.log(`[${event.eventName}] ${event.message}`);
+      }
+
+      if (
+        event.eventName === "SkillSystemStateChange" &&
+        event.message.action === "Stopped"
+      ) {
+        Deno.exit(0);
+      }
     }
   },
 );
@@ -220,12 +253,13 @@ parser.command(
   async (args: Arguments & { name: string }) => {
     const { name } = args;
     const id = await getSkillId(name);
-    if (id) {
-      const result = await cancelSkill(id);
-      console.log(result);
-    } else {
+    if (!id) {
       console.log(`Unknown skill "${name}"`);
+      return;
     }
+
+    const result = await cancelSkill(id);
+    console.log(result);
   },
 );
 
@@ -283,12 +317,8 @@ parser.command(
       stopStreamingEvents(socket, ...events);
     });
 
-    try {
-      for await (const message of getStreamingEvents(socket, ...events)) {
-        console.log("got message", message);
-      }
-    } catch (error) {
-      console.log(error.message);
+    for await (const event of getStreamingEvents(socket, ...events)) {
+      console.log(event);
     }
   },
 );
@@ -299,6 +329,16 @@ parser.command(
   {},
   async () => {
     const result = await restart();
+    console.log(result);
+  },
+);
+
+parser.command(
+  "hazards",
+  "Get or set hazard settings",
+  {},
+  async () => {
+    const result = await getHazardSettings();
     console.log(result);
   },
 );

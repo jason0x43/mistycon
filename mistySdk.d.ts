@@ -28,12 +28,40 @@ declare global {
 
   interface Misty {
     /**
+     * Adds an additional return property field for a registered event.
+     */
+    AddReturnProperty(
+      eventName: string,
+      eventProperty: string,
+      prePauseMs?: number,
+      postPauseMs?: number,
+    ): void;
+
+    /**
+     * Cancel execution of a skill.
+     */
+    CancelSkill(
+      skillId: string,
+      prePauseMs?: number,
+      postPauseMs?: number,
+    ): void;
+
+    /**
      * Changes the color of the LED light behind the logo on Misty's torso.
      */
     ChangeLED(
       red: number,
       green: number,
       blue: number,
+      prePauseMs?: number,
+      postPauseMs?: number,
+    ): void;
+
+    /**
+     * Publishes a debug message to SkillData event listeners
+     */
+    Debug(
+      data: string,
       prePauseMs?: number,
       postPauseMs?: number,
     ): void;
@@ -64,6 +92,11 @@ declare global {
     ): void;
 
     /**
+     * Pause skill execution for a specified number of milliseconds
+     */
+    Pause(prePauseMs: number): void;
+
+    /**
      * Creates a listener that receives live data from one of Misty's event
      * types.
      */
@@ -75,10 +108,7 @@ declare global {
       eventName: string,
       messageType: EventType,
       debounce: number,
-      property?: string,
-      inequality?: Inequality,
-      valueAsString?: string,
-      valueType?: ValueType,
+      keepAlive?: boolean,
       callbackRule?: CallbackRule,
       skillToCall?: string,
       prePauseMs?: number,
@@ -96,7 +126,10 @@ declare global {
       eventName: string,
       messageType: EventType,
       debounce: number,
-      keepAlive?: boolean,
+      property?: string,
+      inequality?: Inequality,
+      valueAsString?: string,
+      valueType?: ValueType,
       callbackRule?: CallbackRule,
       skillToCall?: string,
       prePauseMs?: number,
@@ -130,6 +163,11 @@ declare global {
      * Turns the LED flashlight on Misty's head on or off.
      */
     SetFlashlight(on: boolean, prePauseMs?: number, postPauseMs?: number): void;
+
+    /**
+     * Stops Misty's movement
+     */
+    Stop(prePauseMs?: number, postPauseMs?: number): void;
   }
 
   const misty: Misty;
