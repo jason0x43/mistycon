@@ -7,11 +7,12 @@ A simple controller app for the Misty II robot
 This application is written for the Deno runtime. If you don't already have Deno
 installed, the app will install a local copy the first time it's run.
 
-For the best editing experience, ensure your editor is setup to run the Deno
-language server. When editing skills in the `skills/` directory, the language
-server should be setup to load `skills/deno.json`. The `misty` property from the
-JavaScript SDK is partially typed, allowing the language server to provide some
-autocompletion and type checking.
+For the best editing experience, ensure your editor is running both Deno and
+JSON language servers. When editing a skill script, reference the Misty SDK
+types (`mistySdk.d.ts`) with a triple-slash directive. When editing a JSON
+manifest, reference the Misty JSON schema (`mistySdk.schema.json`) using a
+`$schema` property. These references will allow your editor language server to
+provide autocompletion and type checking for the script and manifest files.
 
 ## Getting started
 
@@ -72,13 +73,9 @@ JSON manifest file, both with the same name (e.g. `lookAround.js` and
 $ ./mc deploy lookAround
 ```
 
-If your editor is properly configured, the Deno language server will be used to
-provide completion for the misty API (the typings are very much a work in
-progress) when you edit files in the `skills/` directory.
-
-This repo also includes a JSON schema for skill manifest files. With a properly
-configured editor, which schema will allow for auto completion when editing
-manifest files.
+If your editor is running Deno and JSON language servers, and if the types and
+JSON schema are properly referenced in the script and manifest files, your
+editor will provide autocompletion and type checking while editing a skill.
 
 ## Misty II reference
 

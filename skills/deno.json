@@ -1,7 +1,0 @@
-{
-	"compilerOptions": {
-		"allowJS": true,
-		"checkJS": true,
-		"types": ["../mistySdk.d.ts"]
-	}
-}

@@ -1,3 +1,5 @@
+/// <reference types="../mistySdk.d.ts" />
+
 function _hazard(data) {
   const triggers = [];
   for (const sensorType of data.AdditionalResults) {

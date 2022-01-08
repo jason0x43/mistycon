@@ -1,3 +1,5 @@
+/// <reference types="../mistySdk.d.ts" />
+
 function _bumped(data) {
   const sensor = data.AdditionalResults[0];
   const isPressed = data.AdditionalResults[1];
