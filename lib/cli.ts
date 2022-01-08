@@ -136,11 +136,29 @@ parser.command(
 );
 
 parser.command(
-  "info",
+  "info [key]",
   "Get information about the robot",
-  {},
-  async () => {
-    console.log(await getDeviceInfo());
+  (yargs: Yargs) => {
+    yargs.positional("key", {
+      description: "A key on the device info object",
+      type: "string",
+    });
+  },
+  async (args: Arguments & { key?: string }) => {
+    const info = await getDeviceInfo();
+    const { key } = args;
+    if (key) {
+      const matchingKeys = Object.keys(info).filter((k) => k.startsWith(key));
+      if (matchingKeys.length > 0) {
+        const matchingInfo: Partial<typeof info> = {};
+        for (const k of matchingKeys) {
+          matchingInfo[k] = info[k];
+        }
+        console.log(matchingInfo);
+      }
+    } else {
+      console.log(info);
+    }
   },
 );
 
