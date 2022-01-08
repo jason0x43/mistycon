@@ -10,4 +10,4 @@ else
 	DENO_BIN=$PWD/.deno/bin/deno
 fi
 
-$DENO_BIN run --allow-net --allow-read --unstable cli.ts $@
+$DENO_BIN run --allow-net --allow-read --unstable ./lib/cli.ts $@
