@@ -77,6 +77,25 @@ If your editor is running Deno and JSON language servers, and if the types and
 JSON schema are properly referenced in the script and manifest files, your
 editor will provide autocompletion and type checking while editing a skill.
 
+A skill script with a types reference:
+
+```js
+/// <reference types="../mistySdk.d.ts" />
+
+misty.ChangeLED(0, 255, 0);
+misty.Drive(10, 0);
+```
+
+A skill manifest with a schema reference:
+
+```json
+{
+	"$schema": "../mistySdk.schema.json",
+	"Name": "driveAround",
+	"Description": "Have Misty drive around"
+}
+```
+
 ## Misty II reference
 
 - [REST API](https://docs.mistyrobotics.com/misty-ii/rest-api/overview/)
