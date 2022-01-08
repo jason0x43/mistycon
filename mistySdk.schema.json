@@ -1,24 +1,28 @@
 {
   "title": "JSON schema for Misty skill manifest",
   "$schema": "http://json-schema.org/draft-07/schema",
-  "id": "mistySdk",
+  "id": "https://raw.githubusercontent.com/jason0x43/mistycon/main/mistySdk.schema.json",
 
   "type": "object",
 
   "properties": {
     "Name": {
+      "description": "The name of the skill as it appears in the Skill Runner web page. This must be the same name you use for the skill code and meta files associated with eh skill.",
       "type": "string"
     },
 
     "UniqueId": {
+      "description": "The unique 128-bit GUID that Misty uses to identify the skill.",
       "type": "string"
     },
 
     "Description": {
+      "description": "A brief description of the skill",
       "type": "string"
     },
 
     "StartupRules": {
+      "description": "A list of strings that defines when and how the skill can start",
       "type": "array",
       "items": {
         "type": "string",
@@ -27,54 +31,65 @@
     },
 
     "Language": {
+      "description": "The language the skill is written in",
       "type": "string"
     },
 
     "BroadcastMode": {
+      "description": "Sets the verbosity for SkillData event messages",
       "type": "string",
       "enum": ["off", "debug", "verbose"]
     },
 
     "TimeoutInSeconds": {
+      "description": "The duration (in seconds) the skill runs before it automatically ends",
       "type": "number"
     },
 
     "CleanupOnCancel": {
+      "description": "If true, Misty stops all processes that are in progress when the skill cancels.",
       "type": "boolean"
     },
 
     "WriteToLog": {
+      "description": "If true, data passed to misty.Debug() messages in this skill also write to to Misty's internal log file.",
       "type": "boolean"
     },
 
     "SkillStorageLifetime": {
+      "description": "Determines how long the system saves the shared data this skill creates",
       "type": "string",
       "enum": ["Skill", "Reboot", "LongTerm"]
     },
 
-	"ReadPermissions": {
-		"type": "array",
-		"items": { "type": "string" }
-	},
+    "ReadPermissions": {
+      "description": "A list of SkillIds for each skill that is allowed to read the data this skill creates with the misty.Set() method",
+      "type": "array",
+      "items": { "type": "string" }
+    },
 
-	"WritePermissions": {
-		"type": "array",
-		"items": { "type": "string" }
-	},
+    "WritePermissions": {
+      "description": "A list of SkillIds for each skill that is allowed to change the data this skill creates with the misty.Set() method",
+      "type": "array",
+      "items": { "type": "string" }
+    },
 
-	"StartPermissions": {
-		"type": "array",
-		"items": { "type": "string" }
-	},
+    "StartPermissions": {
+      "description": "A list of SkillIds for each skill that is allowed to start or cancel this skill. If the array is empty, any other skill can start or cancel this skill. If the array contains the empty string, only this skill can cancel itself.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
 
-	"TriggerPermissions": {
-		"type": "array",
-		"items": { "type": "string" }
-	},
+    "TriggerPermissions": {
+      "description": "A list of SkillIds for each skill that is allowed to trigger user events in this skill. If the array is empty, any other skill can trigger in this skill. If the array contains the empty string, only this skill can trigger events within itself.",
+      "type": "array",
+      "items": { "type": "string" }
+    },
 
-	"Parameters": {
-		"type": "object"
-	}
+    "Parameters": {
+      "description": "An object with key/value pairs for additional data you want to use in the skill",
+      "type": "object"
+    }
   },
 
   "required": ["Name", "UniqueId", "Language"]
