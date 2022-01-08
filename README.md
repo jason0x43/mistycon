@@ -8,7 +8,7 @@ This application is written for the Deno runtime. If you don't already have Deno
 installed, the app will install a local copy the first time it's run.
 
 For the best editing experience, ensure your editor is setup to run the Deno
-language server. When editing skills in the `skills/` directory, the langage
+language server. When editing skills in the `skills/` directory, the language
 server should be setup to load `skills/deno.json`. The `misty` property from the
 JavaScript SDK is partially typed, allowing the language server to provide
 some autocompletion and type checking.
@@ -27,7 +27,7 @@ will be controlled. It should look like:
 
 To issue a command, run the `mc` script. If you don't have Deno, you'll see some
 progress bars as the script installs a local copy, then you'll see the standard
-help output:
+help output, which should look similar to this:
 
 ```
 mc <command>
@@ -64,27 +64,25 @@ $ ./mc led green
 
 A skill is a JavaScript file that will uploaded to the robot and will execute on
 the robot's internal runtime. Each skill consists of a JavaScript file and a
-JSON manifest file, both with the same name (e.g. `look-around.js` and
-`look-around.json`). The `mc` script can be used to deploy apps from the
+JSON manifest file, both with the same name (e.g. `lookAround.js` and
+`lookAround.json`). The `mc` script can be used to deploy apps from the
 `skills/` directory, like
 
 ```
-$ ./mc deploy look-around
+$ ./mc deploy lookAround
 ```
 
 If your editor is properly configured, the Deno language server will be used to
 provide completion for the misty API (the typings are very much a work in progress)
 when you edit files in the `skills/` directory.
 
-This repo also includes a JSON schema for skill manifest files.
+This repo also includes a JSON schema for skill manifest files. With a properly
+configured editor, which schema will allow for auto completion when editing
+manifest files.
 
-## Misty II API
+## Misty II reference
 
-The Misty
-[REST API docs](https://docs.mistyrobotics.com/misty-ii/rest-api/overview/) are
-frequently inaccurate (the docs do point out that much of it is in alpha or beta
-status). The
-[API Explorer](http://sdk.mistyrobotics.com/api-explorer/index.html) is also a good
-source for API information. The
-[JavaScript SDK docs](https://docs.mistyrobotics.com/misty-ii/javascript-sdk/api-reference/)
-are a bit more complete.
+* [REST API](https://docs.mistyrobotics.com/misty-ii/rest-api/overview/)
+* [JavaScript SDK](https://docs.mistyrobotics.com/misty-ii/javascript-sdk/api-reference/)
+* [Events](https://docs.mistyrobotics.com/misty-ii/robot/sensor-data/#events-overview)
+* [API Explorer](http://sdk.mistyrobotics.com/api-explorer/index.html)
