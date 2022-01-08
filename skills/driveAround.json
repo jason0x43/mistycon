@@ -1,0 +1,11 @@
+{
+	"Name": "driveAround",
+	"Description": "Have Misty drive around",
+	"UniqueId": "0ddd028b-6594-41b6-8769-0eaa88402293",
+	"StartupRules": [ "Manual", "Robot" ],
+	"Language": "javascript",
+	"BroadcastMode": "debug",
+	"CleanupOnCancel": true,
+	"TimeoutInSeconds": 36000
+}
+
