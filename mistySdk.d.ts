@@ -1,37 +1,6 @@
-export {};
+import { EventType } from "./api.ts";
 
 declare global {
-  type EventType =
-    | "ActuatorPosition"
-    | "ArTagDetection"
-    | "AudioPlayComplete"
-    | "BatteryCharge"
-    | "BumpSensor"
-    | "ChargerPoseMessage"
-    | "CriticalStatusMessage"
-    | "DriveEncoders"
-    | "FaceRecognition"
-    | "FaceTraining"
-    | "HaltCommand"
-    | "HazardNotification"
-    | "IMU"
-    | "KeyPhraseRecognized"
-    | "LocomotionCommand"
-    | "ObjectDetection"
-    | "PRUMessage"
-    | "SelfState"
-    | "SerialMessage"
-    | "SkillData"
-    | "SkillSystemStateChange"
-    | "SlamStatus"
-    | "SourceTrackDataMessage"
-    | "SourceFocusConfigMessage"
-    | "TextToSpeechComplete"
-    | "TimeOfFlight"
-    | "TouchSensor"
-    | "VoiceRecord"
-    | "WorldState";
-
   type CallbackRule =
     | "synchronous"
     | "override"

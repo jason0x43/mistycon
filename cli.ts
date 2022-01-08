@@ -2,16 +2,27 @@ import { Arguments, JSZip, Yargs, yargs } from "./deps.ts";
 import {
   cancelSkill,
   changeLed,
+  connect,
+  EventType,
   getDeviceInfo,
   getSkills,
+  getStreamingEvents,
   removeSkill,
+  restart,
   runSkill,
   setVolume,
   speak,
+  stopStreamingEvents,
   uploadSkill,
 } from "./api.ts";
 
-export async function getSkillId(name: string): Promise<string | undefined> {
+// Catch SIGINT and call exit explicitly so that the unload handler will be
+// called
+Deno.addSignalListener("SIGINT", () => {
+  Deno.exit(0);
+});
+
+async function getSkillId(name: string): Promise<string | undefined> {
   const skills = await getSkills();
   return skills.find((skill) => skill.name === name)?.uniqueId;
 }
@@ -242,6 +253,53 @@ parser.command(
         console.log(skill.name);
       }
     }
+  },
+);
+
+parser.command(
+  "uniqueId",
+  "Generate a new unique ID",
+  {},
+  () => {
+    console.log(crypto.randomUUID());
+  },
+);
+
+parser.command(
+  "stream <events..>",
+  "Show a live event stream from the robot for a given set of events",
+  (yargs: Yargs) => {
+    yargs.positional("events", {
+      describe: "One or more events to stream",
+      type: "array",
+    });
+  },
+  async (args: Arguments & { events: EventType[] }) => {
+    const socket = await connect();
+    const { events } = args;
+
+    // Unsubscribe from subscribed events when the CLI exits
+    globalThis.addEventListener("unload", () => {
+      stopStreamingEvents(socket, ...events);
+    });
+
+    try {
+      for await (const message of getStreamingEvents(socket, ...events)) {
+        console.log("got message", message);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  },
+);
+
+parser.command(
+  "restart",
+  "Restart Misty",
+  {},
+  async () => {
+    const result = await restart();
+    console.log(result);
   },
 );
 
